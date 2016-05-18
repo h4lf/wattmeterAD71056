@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "wattmeterAD71056", "wattmeterAD71056\wattmeterAD71056.cproj", "{86208D43-E93A-4971-BA5B-88FD267BCB5C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{86208D43-E93A-4971-BA5B-88FD267BCB5C}.Debug|AVR.ActiveCfg = Debug|AVR
+		{86208D43-E93A-4971-BA5B-88FD267BCB5C}.Debug|AVR.Build.0 = Debug|AVR
+		{86208D43-E93A-4971-BA5B-88FD267BCB5C}.Release|AVR.ActiveCfg = Release|AVR
+		{86208D43-E93A-4971-BA5B-88FD267BCB5C}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
