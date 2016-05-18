@@ -135,7 +135,7 @@ void lcd_init(void)
 	SET(LCD_RES);          // Awake LCD from RESET state.
 
 	lcd_write_command(0x21);     // Activate Chip and H=1.
-	lcd_write_command(0xC2);     // Set LCD Voltage to about 7V.
+	lcd_write_command(0x80 | 0x49);     // Set LCD Voltage to about 7V.
 	lcd_write_command(0x13);     // Adjust voltage bias.
 	lcd_write_command(0x20);     // Horizontal addressing and H=0.
 	lcd_write_command(0x09);     // Activate all segments.
