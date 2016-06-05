@@ -46,6 +46,65 @@ void initial_p(void)
 	DRIVER(LED, OUT);
 }
 
+static divmod10_t div_mod_u10(uint32_t Num)
+{
+	divmod10_t Res;
+	uint32_t Qq;
+	
+	// умножаем на 0.8
+	Res.quot = Num >> 1;
+	Res.quot += Res.quot >> 1;
+	Res.quot += Res.quot >> 4;
+	Res.quot += Res.quot >> 8;
+	Res.quot += Res.quot >> 16;
+	Qq = Res.quot;
+	// делим на 8
+	Res.quot >>= 3;
+	// вычисляем остаток
+	Res.rem = (uint8_t)(Num - ((Res.quot << 1) + (Qq & ~7ul)));
+	// корректируем остаток и частное
+	if (Res.rem > 9)
+	{
+		Res.rem -= 10;
+		Res.quot++;
+	}
+	return Res;
+}
+
+void dig_to_string(uint32_t Dig, char * Str, uint8_t Len, uint8_t Pos)
+{
+	uint8_t i;
+	divmod10_t Res;
+	
+	Str += Len;
+	for (i=0; i<Len; i++)
+	{
+		Str--;
+		if ((Pos!=0)&&(i==Pos))
+		{
+			*Str = '.';
+			if (Dig==0)
+			{
+				*--Str = '0';
+				i++;
+			}
+		}
+		else
+		{
+			if ((i>Pos)&&(Dig==0))
+			{
+				*Str = ' ';
+			}
+			else
+			{
+				Res = div_mod_u10(Dig);
+				*Str = Res.rem + '0';
+				Dig = Res.quot;
+			}
+		}
+	}
+}
+
 int main(void)
 {
 	initial_p();
