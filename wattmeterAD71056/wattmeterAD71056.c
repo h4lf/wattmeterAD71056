@@ -36,14 +36,32 @@
 #include "pin_macros.h"
 #include "nokia5110.h"
 
+volatile struct isrflagglob
+{
+	unsigned itmr0	: 1;
+} IsrFlag;
+
+ISR(TIMER0_COMPA_vect)
+{
+	IsrFlag.itmr0 = 1;
+}
+
 void initial_p(void)
 {
 	//------Init CLK
 	CLKPR = 1 << CLKPCE; // CLK Change Enable
-	CLKPR = (1 << CLKPS0) | (1 << CLKPS1); // CLK/8
+	//CLKPR = (1 << CLKPS0) | (1 << CLKPS1); // CLK/8
+	CLKPR = (1 << CLKPS2); // CLK/16
 	
 	//------Init GPIO
 	DRIVER(LED, OUT);
+	
+	//------Init TIM0
+	TCCR0A = (1 << WGM01); // CTC mode
+	OCR0A = TOP_TIMER0;
+	TIMSK0 = (1 << OCIE0A);
+	TCCR0B = (1 << CS01);
+	
 }
 
 static divmod10_t div_mod_u10(uint32_t Num)
@@ -109,6 +127,7 @@ int main(void)
 {
 	initial_p();
 	lcd_init();
+	sei();
 	
 	lcd_pgm_print("NOKIA 5110 LCD");
 	lcd_scursor_xy(0, 1);

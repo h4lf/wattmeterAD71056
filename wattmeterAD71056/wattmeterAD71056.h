@@ -11,6 +11,8 @@
 
 #define LED		B,5,H
 
+#define TOP_TIMER0 249 /* 250*8us = 2ms */
+
 typedef struct
 {
 	uint32_t	quot;
