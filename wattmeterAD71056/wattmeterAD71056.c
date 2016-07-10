@@ -46,12 +46,20 @@ ISR(TIMER0_COMPA_vect)
 	IsrFlag.itmr0 = 1;
 }
 
+ISR(TIMER1_COMPA_vect)
+{
+	OCR1A = OCR1A + COMPARE_STEP;
+}
+
 void initial_p(void)
 {
 	//------Init CLK
 	CLKPR = 1 << CLKPCE; // CLK Change Enable
 	//CLKPR = (1 << CLKPS0) | (1 << CLKPS1); // CLK/8
 	CLKPR = (1 << CLKPS2); // CLK/16
+	
+	//------Disable comparator
+	ACSR = 0x80;
 	
 	//------Init GPIO
 	DRIVER(LED, OUT);
@@ -62,6 +70,13 @@ void initial_p(void)
 	TIMSK0 = (1 << OCIE0A);
 	TCCR0B = (1 << CS01);
 	
+	//------Init TIM1
+	TCCR1A = 0;
+	TCCR1C = 0;
+	TCNT1 = 0;
+	OCR1A = COMPARE_STEP;
+	TIMSK1 = (1 << OCIE1A);
+	TCCR1B = (1 << CS11) | (1 << CS12);
 }
 
 static divmod10_t div_mod_u10(uint32_t Num)
