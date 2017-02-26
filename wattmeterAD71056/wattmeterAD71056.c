@@ -39,6 +39,7 @@
 volatile struct isrflagglob
 {
 	unsigned itmr0	: 1;
+	unsigned itmr1	: 1;
 } IsrFlag;
 
 ISR(TIMER0_COMPA_vect)
@@ -48,7 +49,7 @@ ISR(TIMER0_COMPA_vect)
 
 ISR(TIMER1_COMPA_vect)
 {
-	
+	IsrFlag.itmr1 = 1;
 }
 
 void initial_p(void)
@@ -63,12 +64,14 @@ void initial_p(void)
 	
 	//------Init GPIO
 	DRIVER(LED, OUT);
+	DRIVER(T1IN, IN);
+	DRIVER(T1IN, PULLUP);
 	
 	//------Init TIM0
 	TCCR0A = (1 << WGM01); // CTC mode
 	OCR0A = TOP_TIMER0;
 	TIMSK0 = (1 << OCIE0A);
-	TCCR0B = (1 << CS01);
+	TCCR0B = (1 << CS01); // clk/8
 	
 	//------Init TIM1
 	TCCR1A = 0;
@@ -140,18 +143,78 @@ void dig_to_string(uint32_t Dig, char * Str, uint8_t Len, uint8_t Pos)
 
 int main(void)
 {
+	uint8_t Count = 0;
+	
+	union
+	{
+		struct
+		{
+			uint8_t lo;
+			uint8_t hi;
+		}byte;
+		uint16_t u16;
+	}Tim1Count;
+	
 	initial_p();
 	lcd_init();
 	sei();
 	
+	Tim1Count.u16 = 0;
 	lcd_pgm_print("NOKIA 5110 LCD");
 	lcd_scursor_xy(0, 1);
 	lcd_pgm_print("1234567890-W*h");
     while(1)
     {
-		ON(LED);
-		_delay_ms(1000);
-		OFF(LED);
-		_delay_ms(2000);
+		
+		
+
+		
+		union
+		{
+			struct
+			{
+				uint8_t lo;
+				uint8_t hi;
+			}byte;
+			uint16_t u16; 
+		}Tim1;
+		
+		lcd_scursor_xy(5, 4);
+		lcd_put_hex_byte(0xff);
+		if (IsrFlag.itmr0)
+		{
+			cli();
+			IsrFlag.itmr0 = 0;
+			sei();
+			Count++;
+			if (Count == 250) //0.5s
+			{
+				Count = 0;
+				Tim1.u16 = TCNT1;
+				if (LATCH(LED))
+				{
+					lcd_scursor_xy(0, 2);
+					OFF(LED);
+				}
+				else
+				{
+					lcd_scursor_xy(0, 3);
+					ON(LED);
+				}
+				lcd_put_hex_byte(Tim1.byte.hi);
+				lcd_put_hex_byte(Tim1.byte.lo);
+			}
+		}
+		
+		if (IsrFlag.itmr1)
+		{
+			cli();
+			IsrFlag.itmr1 = 0;
+			sei();
+			Tim1Count.u16++;
+			lcd_scursor_xy(0, 4);
+			lcd_put_hex_byte(Tim1Count.byte.hi);
+			lcd_put_hex_byte(Tim1Count.byte.lo);
+		}
     }
 }
