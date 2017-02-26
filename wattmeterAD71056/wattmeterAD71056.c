@@ -48,7 +48,7 @@ ISR(TIMER0_COMPA_vect)
 
 ISR(TIMER1_COMPA_vect)
 {
-	OCR1A = OCR1A + COMPARE_STEP;
+	
 }
 
 void initial_p(void)
@@ -74,9 +74,9 @@ void initial_p(void)
 	TCCR1A = 0;
 	TCCR1C = 0;
 	TCNT1 = 0;
-	OCR1A = COMPARE_STEP;
+	OCR1A = TOP_TIMER1;
 	TIMSK1 = (1 << OCIE1A);
-	TCCR1B = (1 << CS11) | (1 << CS12);
+	TCCR1B = (1 << CS11) | (1 << CS12) | (1 << WGM12); // CTC mode; T1 clock, falling;
 }
 
 static divmod10_t div_mod_u10(uint32_t Num)

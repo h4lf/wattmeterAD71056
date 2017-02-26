@@ -12,7 +12,7 @@
 #define LED		B,5,H
 
 #define TOP_TIMER0 249 /* 250*8us = 2ms */
-#define COMPARE_STEP 0x100U
+#define TOP_TIMER1 0xFF /* 256 imp = 4500 W*s = 1.25 W*h */
 
 typedef struct
 {
