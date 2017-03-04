@@ -10,6 +10,7 @@
 #define WATTMETERAD71056_H_
 
 #define LED		B,5,H
+#define T1IN	D,5,L
 
 #define TOP_TIMER0 249 /* 250*8us = 2ms */
 #define TOP_TIMER1 0xFF /* 256 imp = 4500 W*s = 1.25 W*h */

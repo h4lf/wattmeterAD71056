@@ -63,12 +63,14 @@ void initial_p(void)
 	
 	//------Init GPIO
 	DRIVER(LED, OUT);
+	DRIVER(T1IN, IN);
+	DRIVER(T1IN, PULLUP);
 	
 	//------Init TIM0
 	TCCR0A = (1 << WGM01); // CTC mode
 	OCR0A = TOP_TIMER0;
 	TIMSK0 = (1 << OCIE0A);
-	TCCR0B = (1 << CS01);
+	TCCR0B = (1 << CS01); // clk/8
 	
 	//------Init TIM1
 	TCCR1A = 0;
