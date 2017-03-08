@@ -30,6 +30,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <avr/sleep.h>
 #include <util/delay.h>
 
 #include "wattmeterAD71056.h"
@@ -192,5 +193,7 @@ int main(void)
 			lcd_put_hex_byte(Tim0Count.byte.hi);
 			lcd_put_hex_byte(Tim0Count.byte.lo);
 		}
+		set_sleep_mode(SLEEP_MODE_IDLE);
+		sleep_mode();
     }
 }
