@@ -39,16 +39,17 @@
 volatile struct isrflagglob
 {
 	unsigned itmr0	: 1;
+	unsigned itmr1	: 1;
 } IsrFlag;
 
-ISR(TIMER0_COMPA_vect)
+ISR(TIMER0_OVF_vect) /* 256 imp = 4500 W*s = 1.25 W*h */
 {
 	IsrFlag.itmr0 = 1;
 }
 
 ISR(TIMER1_COMPA_vect)
 {
-	
+	IsrFlag.itmr1 = 1;
 }
 
 void initial_p(void)
@@ -63,22 +64,22 @@ void initial_p(void)
 	
 	//------Init GPIO
 	DRIVER(LED, OUT);
-	DRIVER(T1IN, IN);
-	DRIVER(T1IN, PULLUP);
+	DRIVER(T0IN, IN);
+	DRIVER(T0IN, PULLUP);
 	
-	//------Init TIM0
-	TCCR0A = (1 << WGM01); // CTC mode
-	OCR0A = TOP_TIMER0;
-	TIMSK0 = (1 << OCIE0A);
-	TCCR0B = (1 << CS01); // clk/8
+	//------Init TIM0 (Mode 0 Normal)
+	TCCR0A = 0;
+	TCNT0 = 0;
+	TIMSK0 = (1 << TOIE0);
+	TCCR0B = (1 << CS01) | (1 << CS02); // T0 clock source, falling edge
 	
-	//------Init TIM1
+	//------Init TIM1 (Mode 4 CTC)
 	TCCR1A = 0;
 	TCCR1C = 0;
 	TCNT1 = 0;
 	OCR1A = TOP_TIMER1;
 	TIMSK1 = (1 << OCIE1A);
-	TCCR1B = (1 << CS11) | (1 << CS12) | (1 << WGM12); // CTC mode; T1 clock, falling;
+	TCCR1B = (1 << CS11) | (1 << WGM12); // CTC mode; clk/8;
 }
 
 static divmod10_t div_mod_u10(uint32_t Num)
@@ -142,6 +143,8 @@ void dig_to_string(uint32_t Dig, char * Str, uint8_t Len, uint8_t Pos)
 
 int main(void)
 {
+	uint8_t CountSec = 0;
+	
 	initial_p();
 	lcd_init();
 	sei();
@@ -151,9 +154,6 @@ int main(void)
 	lcd_pgm_print("1234567890-W*h");
     while(1)
     {
-		ON(LED);
-		_delay_ms(1000);
-		OFF(LED);
-		_delay_ms(2000);
+		
     }
 }

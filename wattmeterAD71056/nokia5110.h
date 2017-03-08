@@ -10,7 +10,7 @@
 #define NOKIA5110_H_
 
 #define LCD_SCK D,3,H
-#define LCD_SDI D,4,H
+#define LCD_SDI D,5,H
 #define LCD_D_C D,6,H
 #define LCD_SCE D,7,H
 #define LCD_RES B,0,H
