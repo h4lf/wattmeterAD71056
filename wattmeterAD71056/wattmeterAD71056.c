@@ -193,7 +193,9 @@ int main(void)
 			lcd_put_hex_byte(Tim0Count.byte.hi);
 			lcd_put_hex_byte(Tim0Count.byte.lo);
 		}
+		#ifdef IDLE_ON
 		set_sleep_mode(SLEEP_MODE_IDLE);
 		sleep_mode();
+		#endif
     }
 }

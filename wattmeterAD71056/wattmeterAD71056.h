@@ -9,6 +9,8 @@
 #ifndef WATTMETERAD71056_H_
 #define WATTMETERAD71056_H_
 
+#define IDLE_ON
+
 #define LED		B,5,H
 #define T0IN	D,4,L
 
