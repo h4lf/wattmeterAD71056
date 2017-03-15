@@ -30,6 +30,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <avr/sleep.h>
 #include <util/delay.h>
 
 #include "wattmeterAD71056.h"
@@ -144,7 +145,17 @@ void dig_to_string(uint32_t Dig, char * Str, uint8_t Len, uint8_t Pos)
 int main(void)
 {
 	uint8_t CountSec = 0;
+	union
+	{
+		struct
+		{
+			uint8_t lo;
+			uint8_t hi;
+		}byte;
+		uint16_t u16;
+	}Tim0Count;
 	
+	Tim0Count.u16 = 0;
 	initial_p();
 	lcd_init();
 	sei();
@@ -154,6 +165,37 @@ int main(void)
 	lcd_pgm_print("1234567890-W*h");
     while(1)
     {
+		//uint8_t Tim0;
 		
+		if (IsrFlag.itmr1)
+		{
+			cli();
+			IsrFlag.itmr1 = 0;
+			sei();
+			if (CountSec == 0)
+			{
+				CountSec = 9; // 10*0.05s=0.5s
+				if (LATCH(LED)) { OFF(LED); }
+				else { ON(LED); }
+				lcd_scursor_xy(0, 2);
+				lcd_put_hex_byte(TCNT0);
+			}
+			else CountSec--;
+		}
+		
+		if (IsrFlag.itmr0)
+		{
+			cli();
+			IsrFlag.itmr0 = 0;
+			sei();
+			Tim0Count.u16++;
+			lcd_scursor_xy(0, 3);
+			lcd_put_hex_byte(Tim0Count.byte.hi);
+			lcd_put_hex_byte(Tim0Count.byte.lo);
+		}
+		#ifdef IDLE_ON
+		set_sleep_mode(SLEEP_MODE_IDLE);
+		sleep_mode();
+		#endif
     }
 }
