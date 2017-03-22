@@ -36,6 +36,7 @@
 #include "wattmeterAD71056.h"
 #include "pin_macros.h"
 #include "nokia5110.h"
+#include "timer_soft.h"
 
 volatile struct isrflagglob
 {
@@ -43,14 +44,22 @@ volatile struct isrflagglob
 	unsigned itmr1	: 1;
 } IsrFlag;
 
+time_t TimerCount;
+
 ISR(TIMER0_OVF_vect) /* 256 imp = 4500 W*s = 1.25 W*h */
 {
 	IsrFlag.itmr0 = 1;
+	TimerCount++;
 }
 
 ISR(TIMER1_COMPA_vect)
 {
 	IsrFlag.itmr1 = 1;
+}
+
+static inline time_t get_time(void)
+{
+	return TimerCount;
 }
 
 void initial_p(void)
