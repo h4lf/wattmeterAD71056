@@ -121,9 +121,6 @@
     <Compile Include="pin_macros.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="timer_soft.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="timer_soft.h">
       <SubType>compile</SubType>
     </Compile>

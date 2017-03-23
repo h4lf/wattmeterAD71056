@@ -153,7 +153,8 @@ void dig_to_string(uint32_t Dig, char * Str, uint8_t Len, uint8_t Pos)
 
 int main(void)
 {
-	uint8_t CountSec = 0;
+	Timer_t HalfSecond;
+	
 	union
 	{
 		struct
@@ -172,24 +173,16 @@ int main(void)
 	lcd_pgm_print("NOKIA 5110 LCD");
 	lcd_scursor_xy(0, 1);
 	lcd_pgm_print("1234567890-W*h");
+	timer_set(&HalfSecond, 10);
     while(1)
     {
-		//uint8_t Tim0;
-		
-		if (IsrFlag.itmr1)
+		if (timer_expired(&HalfSecond))
 		{
-			cli();
-			IsrFlag.itmr1 = 0;
-			sei();
-			if (CountSec == 0)
-			{
-				CountSec = 9; // 10*0.05s=0.5s
-				if (LATCH(LED)) { OFF(LED); }
-				else { ON(LED); }
-				lcd_scursor_xy(0, 2);
-				lcd_put_hex_byte(TCNT0);
-			}
-			else CountSec--;
+			timer_reset(&HalfSecond);
+			if (LATCH(LED)) { OFF(LED); }
+			else { ON(LED); }
+			lcd_scursor_xy(0, 2);
+			lcd_put_hex_byte(TCNT0);
 		}
 		
 		if (IsrFlag.itmr0)
