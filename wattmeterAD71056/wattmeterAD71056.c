@@ -49,12 +49,12 @@ time_t TimerCount;
 ISR(TIMER0_OVF_vect) /* 256 imp = 4500 W*s = 1.25 W*h */
 {
 	IsrFlag.itmr0 = 1;
-	TimerCount++;
 }
 
 ISR(TIMER1_COMPA_vect)
 {
 	IsrFlag.itmr1 = 1;
+	TimerCount++;
 }
 
 static inline time_t get_time(void)
