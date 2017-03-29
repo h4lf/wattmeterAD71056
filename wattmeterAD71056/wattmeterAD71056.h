@@ -9,16 +9,19 @@
 #ifndef WATTMETERAD71056_H_
 #define WATTMETERAD71056_H_
 
-#define LED		B,5,H
+#define IDLE_ON
 
-#define TOP_TIMER0 249 /* 250*8us = 2ms */
-#define COMPARE_STEP 0x100U
+#define LED		B,5,H
+#define T0IN	D,4,L
+
+#define TOP_TIMER1 6249U /* 50ms @ 1MHz/8 */
 
 typedef struct
 {
 	uint32_t	quot;
 	uint8_t		rem;
 }divmod10_t;
+
 
 void initial_p(void);
 static divmod10_t div_mod_u10(uint32_t);
